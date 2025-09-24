@@ -59,7 +59,7 @@ function Promotions() {
 
   const filteredPromotions = selectedCategory === 'all' 
     ? promotions 
-    : promotions.filter(promo => promo.category === selectedCategory || promo.category === "Все категории");
+    : promotions.filter(promo => promo.category === selectedCategory);
 
   const featuredPromotions = promotions.filter(promo => promo.featured === true);
 

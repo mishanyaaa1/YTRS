@@ -301,14 +301,6 @@ function App() {
           </div>
           <div className="footer-bottom">
             <p>{footerData.copyright || '© 2024 ЮТОРС. Все права защищены.'}</p>
-            <a 
-              href="https://dectitle.ru/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="developer-link"
-            >
-              Разработка ПО: dectitle.ru
-            </a>
           </div>
         </div>
       </footer>

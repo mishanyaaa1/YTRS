@@ -129,19 +129,28 @@ async function ensureBotSettingsTable() {
   }
 }
 
+// Авторизация удалена - прямой доступ к админке
 
+function verifySameOrigin(req, res, next) {
+  // Разрешаем системные и auth-эндпоинты без проверки
+  if (req.path === '/api/health' || req.path === '/api/admin/login' || req.path === '/api/admin/logout' || req.path === '/api/admin/me') {
+    return next();
+  }
+  const method = req.method.toUpperCase();
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+    const origin = req.headers.origin || '';
+    const referer = req.headers.referer || '';
+    // Если заголовков нет (например, через дев-прокси) — пропускаем
+    if (!origin && !referer) return next();
+    const ok = Array.from(allowedOrigins).some((o) => origin === o || referer.startsWith(o));
+    if (!ok) return res.status(403).json({ error: 'Forbidden origin' });
+  }
+  next();
+}
+
+app.use(verifySameOrigin);
 
 // Healthcheck
-
-// Admin me endpoint
-
-// Admin filter-settings endpoint
-app.get("/api/admin/filter-settings", (req, res) => {
-  res.json({});
-});
-app.get("/api/admin/me", (req, res) => {
-  res.json({ username: "admin", id: 1 });
-});
 app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
@@ -441,7 +450,7 @@ app.get('/api/products', async (req, res) => {
         id: r.id,
         title: r.title,
         price: r.price,
-        category: r.category_name || "Все категории",
+        category: r.category_name,
         subcategory: r.subcategory_name,
         brand: r.brand_name,
         available: !!r.available,
@@ -577,8 +586,8 @@ app.get('/api/promotions', async (req, res) => {
       title: r.title,
       description: r.description,
       discount: r.discount,
-      category: r.category_name || "Все категории",
-      validUntil: r.valid_until ? new Date(r.valid_until).toISOString().split("T")[0] : null,
+      category: r.category_name,
+      validUntil: r.valid_until,
       active: !!r.active,
       featured: !!r.featured,
       minPurchase: r.min_purchase
@@ -710,7 +719,7 @@ app.post('/api/orders', async (req, res) => {
     const id = String(orderNumber);
     await run(
       `INSERT INTO orders (id, order_number, customer_id, status, pricing_json) VALUES ($1, $2, $3, 'new', $4)` ,
-      [id, String(orderNumber), customerId, priceCalculation ? JSON.stringify(priceCalculation) : "{}"]
+      [id, String(orderNumber), customerId, JSON.stringify(priceCalculation)]
     );
 
     if (Array.isArray(cartItems)) {
