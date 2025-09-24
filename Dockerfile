@@ -21,7 +21,7 @@ FROM node:18.19-alpine AS production
 WORKDIR /app
 
 # Устанавливаем необходимые пакеты (sqlite3 убран, компиляция не нужна)
-# RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++
 
 # Копируем package.json сервера
 COPY server/package*.json ./
