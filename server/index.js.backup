@@ -441,7 +441,7 @@ app.get('/api/products', async (req, res) => {
         id: r.id,
         title: r.title,
         price: r.price,
-        category: r.category_name || "Все категории",
+        category: r.category_name,
         subcategory: r.subcategory_name,
         brand: r.brand_name,
         available: !!r.available,
@@ -577,8 +577,8 @@ app.get('/api/promotions', async (req, res) => {
       title: r.title,
       description: r.description,
       discount: r.discount,
-      category: r.category_name || "Все категории",
-      validUntil: r.valid_until ? new Date(r.valid_until).toISOString().split("T")[0] : null,
+      category: r.category_name,
+      validUntil: r.valid_until,
       active: !!r.active,
       featured: !!r.featured,
       minPurchase: r.min_purchase
@@ -710,7 +710,7 @@ app.post('/api/orders', async (req, res) => {
     const id = String(orderNumber);
     await run(
       `INSERT INTO orders (id, order_number, customer_id, status, pricing_json) VALUES ($1, $2, $3, 'new', $4)` ,
-      [id, String(orderNumber), customerId, priceCalculation ? JSON.stringify(priceCalculation) : "{}"]
+      [id, String(orderNumber), customerId, JSON.stringify(priceCalculation)]
     );
 
     if (Array.isArray(cartItems)) {
@@ -1367,18 +1367,6 @@ app.get('/api/test', (req, res) => {
 // Bot management endpoints
 app.get('/api/admin/bot', async (req, res) => {
   try {
-    // Убеждаемся, что таблица существует
-    await run(`
-      CREATE TABLE IF NOT EXISTS bot_settings (
-        id SERIAL PRIMARY KEY,
-        bot_token VARCHAR(255),
-        chat_id VARCHAR(255),
-        enabled INTEGER DEFAULT 1,
-        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
     const settings = await get( `SELECT bot_token, chat_id, enabled FROM bot_settings ORDER BY id DESC LIMIT 1`);
     if (!settings) {
       return res.json({ bot_token: '', chat_id: '', enabled: false });
@@ -1397,18 +1385,6 @@ app.get('/api/admin/bot', async (req, res) => {
 app.post('/api/admin/bot', async (req, res) => {
   try {
     const { bot_token, enabled } = req.body;
-    
-    // Убеждаемся, что таблица существует
-    await run(`
-      CREATE TABLE IF NOT EXISTS bot_settings (
-        id SERIAL PRIMARY KEY,
-        bot_token VARCHAR(255),
-        chat_id VARCHAR(255),
-        enabled INTEGER DEFAULT 1,
-        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
     
     // Проверяем, есть ли уже настройки
     const existing = await get( `SELECT id, chat_id FROM bot_settings ORDER BY id DESC LIMIT 1`);
