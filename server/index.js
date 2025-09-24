@@ -441,7 +441,7 @@ app.get('/api/products', async (req, res) => {
         id: r.id,
         title: r.title,
         price: r.price,
-        category: r.category_name,
+        category: r.category_name || "Все категории",
         subcategory: r.subcategory_name,
         brand: r.brand_name,
         available: !!r.available,
@@ -577,8 +577,8 @@ app.get('/api/promotions', async (req, res) => {
       title: r.title,
       description: r.description,
       discount: r.discount,
-      category: r.category_name,
-      validUntil: r.valid_until,
+      category: r.category_name || "Все категории",
+      validUntil: r.valid_until ? new Date(r.valid_until).toISOString().split("T")[0] : null,
       active: !!r.active,
       featured: !!r.featured,
       minPurchase: r.min_purchase
@@ -710,7 +710,7 @@ app.post('/api/orders', async (req, res) => {
     const id = String(orderNumber);
     await run(
       `INSERT INTO orders (id, order_number, customer_id, status, pricing_json) VALUES ($1, $2, $3, 'new', $4)` ,
-      [id, String(orderNumber), customerId, JSON.stringify(priceCalculation)]
+      [id, String(orderNumber), customerId, priceCalculation ? JSON.stringify(priceCalculation) : "{}"]
     );
 
     if (Array.isArray(cartItems)) {
