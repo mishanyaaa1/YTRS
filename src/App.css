@@ -479,16 +479,61 @@ html {
 }
 
 .footer-bottom {
-  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   color: #888888;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .footer-bottom p {
   font-family: 'Russo One', sans-serif;
   font-weight: 400;
   letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.developer-link {
+  color: #888888;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  line-height: 1.2;
+}
+
+.developer-link:hover {
+  color: #e6a34a;
+  background: rgba(230, 163, 74, 0.1);
+  border-color: rgba(230, 163, 74, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(230, 163, 74, 0.2);
+}
+
+.developer-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(230, 163, 74, 0.3);
+}
+
+/* Адаптивные стили для футера */
+@media (max-width: 768px) {
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .developer-link {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.6rem;
+  }
 }
 
 /* Стили для социальных ссылок */
