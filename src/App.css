@@ -479,16 +479,41 @@ html {
 }
 
 .footer-bottom {
-  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   color: #888888;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .footer-bottom p {
   font-family: 'Russo One', sans-serif;
   font-weight: 400;
   letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.developer-link {
+  color: #888888;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.developer-link:hover {
+  color: #e6a34a;
+}
+
+@media (max-width: 768px) {
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
 }
 
 /* Стили для социальных ссылок */
